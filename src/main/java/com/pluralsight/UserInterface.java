@@ -20,9 +20,9 @@ public class UserInterface {
         loadDealership();  // grabbing the instance of the DealershipFileManager class
 
 
-        int choice = 0;
+        int choice = 99;
 
-        while (choice != 0) {
+        while (choice != 99) {
 
              displayMenu();   // Calling on the menu
 
