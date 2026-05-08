@@ -1,8 +1,5 @@
 package com.pluralsight;
-
 import java.io.BufferedReader;
-
-
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -18,7 +15,7 @@ public Dealership getDealership() {
         // Reads the first line (Dealership Info)
         String firstLine = bufferedReader.readLine();
         // Reads the vehicle lines
-        String line = bufferedReader.readLine();
+        String line;
 
         String[] dealershipParts = firstLine.split("\\|");
         String name = dealershipParts[0].trim();
@@ -55,7 +52,7 @@ public Dealership getDealership() {
     return null;
 }
 
-public static void saveDealership(){
+public void saveDealership(Dealership dealership){
 
 
 }
