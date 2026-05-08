@@ -20,7 +20,7 @@ public class UserInterface {
         loadDealership();  // grabbing the instance of the DealershipFileManager class
 
 
-        int choice = 99;
+        int choice = 0;
 
         while (choice != 99) {
 
@@ -52,7 +52,7 @@ public class UserInterface {
                     processAllVehiclesRequest();
                     break;
                 case 8:
-                    // add vehicle
+                    processAddVehicleRequest();
                     break;
                 case 9:
                     // remove vehicle
@@ -153,5 +153,34 @@ public class UserInterface {
     private void processAllVehiclesRequest(){
         List<Vehicle> vehicles = dealership.getAllVehicles();
         displayVehicles(vehicles);
+    }
+
+    private void processAddVehicleRequest(){
+        System.out.print("Enter the VIN: ");
+        int vin = sc.nextInt();
+        sc.nextLine();
+        System.out.print("Enter the Year: ");
+        int year = sc.nextInt();
+        sc.nextLine();
+        System.out.print("Enter the Make: ");
+        String make = sc.nextLine().trim();
+        System.out.print("Enter the Model: ");
+        String model = sc.nextLine().trim();
+        System.out.print("Enter the Vehicle Type: ");
+        String vehicleType = sc.nextLine().trim();
+        System.out.print("Enter the Color: ");
+        String color = sc.nextLine().trim();
+        System.out.println("Enter the Mileage: ");
+        int odometer = sc.nextInt();
+        sc.nextLine();
+        System.out.println("Enter the Price: ");
+        double price = sc.nextDouble();
+        sc.nextLine();
+
+        Vehicle v = new Vehicle(vin, year, make, model, vehicleType, color, odometer, price);
+        dealership.addVehicle(v);
+
+        DealershipFileManager fileManager = new DealershipFileManager();
+        fileManager.saveDealership(dealership);
     }
 }
