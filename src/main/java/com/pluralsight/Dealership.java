@@ -96,8 +96,8 @@ public class Dealership {
         return results;
     }
 
-    public void removeVehicle(Vehicle vehicle){
-        inventory.remove(vehicle);
+    public void removeVehicle(Vehicle selectedVehicle){
+        inventory.remove(selectedVehicle);
     }
 
 

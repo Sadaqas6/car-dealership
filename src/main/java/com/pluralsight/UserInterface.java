@@ -55,7 +55,7 @@ public class UserInterface {
                     processAddVehicleRequest();
                     break;
                 case 9:
-                    // remove vehicle
+                    processRemoveVehicleRequest();
                     break;
                 case 99:
                     System.out.println("Goodbye!!");
@@ -183,4 +183,30 @@ public class UserInterface {
         DealershipFileManager fileManager = new DealershipFileManager();
         fileManager.saveDealership(dealership);
     }
+
+    private void processRemoveVehicleRequest() {
+        System.out.print("Enter the VIN of the vehicle you want to remove: ");
+        int vin = sc.nextInt();
+        sc.nextLine();
+
+        Vehicle selectedVehicle = null;
+        for (Vehicle v : dealership.getAllVehicles()) {
+            if (v.getVin() == vin) {
+                selectedVehicle = v;
+                break;
+            }
+        }
+
+        if (selectedVehicle != null) {
+            dealership.removeVehicle(selectedVehicle);
+
+            DealershipFileManager fileManager = new DealershipFileManager();
+            fileManager.saveDealership(dealership);
+
+            System.out.println("Vehicle removed successfully!");
+        } else {
+            System.out.println("No vehicle found with VIN: " + vin);
+        }
+    }
+
 }
