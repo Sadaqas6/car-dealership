@@ -1,4 +1,5 @@
 package com.pluralsight;
+
 import java.util.List;
 import java.util.Scanner;
 
@@ -6,16 +7,16 @@ import java.util.Scanner;
 public class UserInterface {
 
 
-
     private Dealership dealership;
     private Scanner sc = new Scanner(System.in);
-    private void loadDealership(){
+
+    private void loadDealership() {
 
         DealershipFileManager fileManager = new DealershipFileManager();
         this.dealership = fileManager.getDealership();
     }
 
-    public void display(){
+    public void display() {
 
         loadDealership();  // grabbing the instance of the DealershipFileManager class
 
@@ -24,12 +25,12 @@ public class UserInterface {
 
         while (choice != 99) {
 
-             displayMenu();   // Calling on the menu
+            displayMenu();   // Calling on the menu
 
             System.out.print("Please enter your choice: ");
             choice = sc.nextInt();
 
-            switch(choice){
+            switch (choice) {
                 case 1:
                     processGetByPriceRequest();
                     break;
@@ -57,6 +58,12 @@ public class UserInterface {
                 case 9:
                     processRemoveVehicleRequest();
                     break;
+                case 10:
+                    processSellLeaseVehicleRequest();
+                    break;
+                case 11:
+                    processDisplayContractsRequest();
+                    break;
                 case 99:
                     System.out.println("Goodbye!!");
                     System.exit(99);
@@ -79,17 +86,19 @@ public class UserInterface {
         System.out.println("7 - List ALL vehicles");
         System.out.println("8 - Add a vehicle");
         System.out.println("9 - Remove a vehicle");
+        System.out.println("10 - Sell/Lease a vehicle");
+        System.out.println("11 - View all contracts");
         System.out.println("99 - Quit");
     }
 
 
     private void displayVehicles(List<Vehicle> vehicles) {
-        for(Vehicle v : vehicles){
+        for (Vehicle v : vehicles) {
             System.out.println(v);
         }
     }
 
-    private void processGetByPriceRequest(){
+    private void processGetByPriceRequest() {
         System.out.print("Please enter the minimum price you are looking for: ");
         double min = sc.nextDouble();
         System.out.print("Please enter the maximum price you are looking for: ");
@@ -100,7 +109,7 @@ public class UserInterface {
 
     }
 
-    private void processGetByMakeModelRequest(){
+    private void processGetByMakeModelRequest() {
         System.out.print("Please enter the make of the vehicle you are looking for: ");
         String make = sc.nextLine().trim();
         System.out.print("Please enter the model of the vehicle you are looking for: ");
@@ -110,7 +119,7 @@ public class UserInterface {
         displayVehicles(vehicles);
     }
 
-    private void processGetByYearRequest(){
+    private void processGetByYearRequest() {
         System.out.print("Please enter the minimum year you are looking for: ");
         int min = sc.nextInt();
         System.out.print("Please enter the maximum year you are looking for: ");
@@ -121,7 +130,7 @@ public class UserInterface {
 
     }
 
-    private void processGetByColorRequest(){
+    private void processGetByColorRequest() {
         System.out.print("Please enter the desired color you are looking for: ");
         String color = sc.nextLine();
 
@@ -130,7 +139,7 @@ public class UserInterface {
 
     }
 
-    private void processGetByMileageRequest(){
+    private void processGetByMileageRequest() {
         System.out.print("Please enter the minimum mileage you are looking for: ");
         int min = sc.nextInt();
         System.out.print("Please enter the maximum mileage you are looking for: ");
@@ -141,7 +150,7 @@ public class UserInterface {
 
     }
 
-    private void processGetByVehicleTypeRequest(){
+    private void processGetByVehicleTypeRequest() {
         System.out.print("Please enter the type of vehicle you are looking for: ");
         String vehicleType = sc.nextLine();
 
@@ -150,12 +159,12 @@ public class UserInterface {
 
     }
 
-    private void processAllVehiclesRequest(){
+    private void processAllVehiclesRequest() {
         List<Vehicle> vehicles = dealership.getAllVehicles();
         displayVehicles(vehicles);
     }
 
-    private void processAddVehicleRequest(){
+    private void processAddVehicleRequest() {
         System.out.print("Enter the VIN: ");
         int vin = sc.nextInt();
         sc.nextLine();
@@ -209,4 +218,81 @@ public class UserInterface {
         }
     }
 
+    public void processSellLeaseVehicleRequest() {
+        System.out.print("What is the VIN for the vehicle? ");
+        int vin = sc.nextInt();
+        sc.nextLine();
+
+        Vehicle selectedVehicle = null;
+        for (Vehicle v : dealership.getAllVehicles()) {
+            if (v.getVin() == vin) {
+                selectedVehicle = v;
+                break;
+            }
+        }
+        if (selectedVehicle == null) {
+            System.out.println("Vehicle not found!");
+            return;
+        }
+        System.out.print("Enter your Name: ");
+        String custName = sc.nextLine().trim();
+        System.out.print("Enter your email: ");
+        String email = sc.nextLine().trim();
+        System.out.print("Enter the date(YYYY-MM-DD): ");
+        String date = sc.nextLine().trim();
+        System.out.print("Are you looking to sell or lease? ");
+        String option = sc.nextLine().trim();
+
+        switch (option.toLowerCase()) {
+            case "sell":
+                saleVehicle(date, custName, email, selectedVehicle);
+                break;
+            case "lease":
+                leaseVehicle(date, custName, email, selectedVehicle);
+                break;
+            default:
+                System.out.println("Invalid option");
+        }
+    }
+
+    private void processDisplayContractsRequest() {
+        List<Contract> contracts = new ContractFileManager().getContracts();
+
+        if (contracts.isEmpty()) {
+            System.out.println("No contracts found.");
+            return;
+        }
+
+        for (Contract c : contracts) {
+            System.out.println(c);
+            System.out.println();
+        }
+    }
+
+
+
+
+    public void saleVehicle(String date, String customerName, String customerEmail, Vehicle vehicleSold) {
+        System.out.print("Are you financing? (yes/no): ");
+        String financeOption = sc.nextLine().trim();
+        boolean isFinanced = financeOption.equalsIgnoreCase("yes");
+
+        SalesContract contract = new SalesContract(date, customerName, customerEmail, vehicleSold, isFinanced);
+        new ContractFileManager().saveContract(contract);
+        dealership.removeVehicle(vehicleSold);
+        new DealershipFileManager().saveDealership(dealership);
+
+    }
+
+    public void leaseVehicle(String date, String customerName, String customerEmail, Vehicle vehicleSold) {
+        if (2026 - vehicleSold.getYear() > 3) {
+            System.out.println("Sorry, you cannot lease a vehicle over 3 years old!");
+            return;
+        }
+        LeaseContract contract = new LeaseContract(date, customerName, customerEmail, vehicleSold);
+        dealership.removeVehicle(vehicleSold);
+        new ContractFileManager().saveContract(contract);
+        new DealershipFileManager().saveDealership(dealership);
+
+    }
 }

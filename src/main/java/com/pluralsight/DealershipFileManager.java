@@ -64,7 +64,7 @@ public void saveDealership(Dealership dealership){
                 bufferedWriter.write(v.getVin() + "|" + v.getYear() + "|" + v.getMake()
                         + "|" + v.getModel() + "|" + v.getVehicleType() + "|" + v.getColor() + "|"
                         + v.getOdometer() + "|" + v.getPrice());
-                bufferedWriter.newLine();;
+                bufferedWriter.newLine();
             }
             bufferedWriter.close();
         }catch (IOException e){

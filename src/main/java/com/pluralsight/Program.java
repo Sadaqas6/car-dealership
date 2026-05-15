@@ -6,6 +6,5 @@ public class Program {
 
         UserInterface user = new UserInterface();
         user.display();
-
     }
 }
